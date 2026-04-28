@@ -43,6 +43,22 @@ const toTitleCase = (text) =>
       return prefix + letter.toLocaleUpperCase("vi-VN");
     });
 
+const toSentenceCase = (text) =>
+  text
+    .toLocaleLowerCase("vi-VN")
+    .replace(/(^|[.!?\n]\s*)([^\s.!?])/gu, (match, prefix, letter) => {
+      return prefix + letter.toLocaleUpperCase("vi-VN");
+    });
+
+const cleanText = (text) =>
+  text
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.trim().replace(/[ \t]+/g, " "))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
 const getYouTubeId = (url) => {
   try {
     const parsed = new URL(url);
@@ -76,10 +92,37 @@ const initTabs = () => {
   });
 };
 
+const initToolMenu = () => {
+  $$("[data-jump]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = $(`#${button.dataset.jump}`);
+      const menu = button.closest(".tool-menu");
+      if (!target || !menu) return;
+
+      menu.querySelectorAll(".menu-item").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+};
+
+const updateTextStats = () => {
+  const text = $("#text-input").value;
+  const trimmed = text.trim();
+  const words = trimmed ? trimmed.match(/[^\s]+/g) || [] : [];
+  const lines = trimmed ? text.replace(/\n$/, "").split(/\r?\n/).length : 0;
+
+  $("#char-count").textContent = text.length;
+  $("#char-no-space-count").textContent = text.replace(/\s/g, "").length;
+  $("#word-count").textContent = words.length;
+  $("#line-count").textContent = lines;
+};
+
 const initTextTools = () => {
   $("[data-clear='text-input']").addEventListener("click", () => {
     $("#text-input").value = "";
     $("#text-output").value = "";
+    updateTextStats();
   });
 
   $$("[data-text-action]").forEach((button) => {
@@ -90,9 +133,18 @@ const initTextTools = () => {
 
       if (action === "slug") output.value = toSlug(input);
       if (action === "uppercase") output.value = input.toLocaleUpperCase("vi-VN");
+      if (action === "lowercase") output.value = input.toLocaleLowerCase("vi-VN");
       if (action === "titlecase") output.value = toTitleCase(input);
+      if (action === "sentencecase") output.value = toSentenceCase(input);
+      if (action === "clean") output.value = cleanText(input);
     });
   });
+
+  $("#text-input").addEventListener("input", updateTextStats);
+  $("#clean-to-output").addEventListener("click", () => {
+    $("#text-output").value = cleanText($("#text-input").value);
+  });
+  updateTextStats();
 };
 
 const generateOrderedList = () => {
@@ -181,6 +233,40 @@ const generateTable = () => {
   $("#table-output").value = `<div style="width: 100%; overflow-x: auto;">\n<table style="width: 100%; border-collapse: collapse; table-layout: auto;">${tableHead}\n  <tbody>\n${bodyRows}\n  </tbody>\n</table>\n</div>`;
 };
 
+const setMeterState = (row, value, goodMin, goodMax, warnMin, warnMax) => {
+  row.classList.remove("good", "warn", "danger");
+  if (value >= goodMin && value <= goodMax) {
+    row.classList.add("good");
+  } else if (value >= warnMin && value <= warnMax) {
+    row.classList.add("warn");
+  } else {
+    row.classList.add("danger");
+  }
+};
+
+const updateMetaCounters = () => {
+  const titleLength = $("#meta-title").value.length;
+  const descriptionLength = $("#meta-description").value.length;
+  const titleRow = $("#meta-title-count").closest(".meter-row");
+  const descriptionRow = $("#meta-description-count").closest(".meter-row");
+
+  $("#meta-title-count").textContent = `${titleLength} ký tự`;
+  $("#meta-description-count").textContent = `${descriptionLength} ký tự`;
+  setMeterState(titleRow, titleLength, 50, 60, 35, 70);
+  setMeterState(descriptionRow, descriptionLength, 140, 160, 110, 170);
+};
+
+const generateMeta = () => {
+  const title = escapeHtml($("#meta-title").value.trim() || "Tiêu đề SEO của bài viết");
+  const description = escapeHtml($("#meta-description").value.trim() || "Mô tả ngắn gọn của trang.");
+  const url = escapeHtml($("#meta-url").value.trim());
+  const canonical = url ? `\n<link rel="canonical" href="${url}">` : "";
+  const ogUrl = url ? `\n<meta property="og:url" content="${url}">` : "";
+
+  $("#meta-output").value = `<title>${title}</title>\n<meta name="description" content="${description}">${canonical}\n<meta property="og:title" content="${title}">\n<meta property="og:description" content="${description}">${ogUrl}\n<meta property="og:type" content="article">`;
+  updateMetaCounters();
+};
+
 const initCopyButtons = () => {
   $$("[data-copy]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -207,15 +293,20 @@ const initGenerators = () => {
   $("#generate-link").addEventListener("click", generateLink);
   $("#generate-video").addEventListener("click", generateVideo);
   $("#generate-table").addEventListener("click", generateTable);
+  $("#generate-meta").addEventListener("click", generateMeta);
+  $("#meta-title").addEventListener("input", updateMetaCounters);
+  $("#meta-description").addEventListener("input", updateMetaCounters);
 
   generateOrderedList();
   generateLink();
   generateVideo();
   generateTable();
+  generateMeta();
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   initTabs();
+  initToolMenu();
   initTextTools();
   initCopyButtons();
   initGenerators();
