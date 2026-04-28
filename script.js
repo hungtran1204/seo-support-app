@@ -1,0 +1,222 @@
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+const escapeHtml = (value) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
+const showToast = (message) => {
+  const toast = $("#toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+};
+
+const clampNumber = (value, min, max, fallback) => {
+  const number = Number.parseInt(value, 10);
+  if (Number.isNaN(number)) return fallback;
+  return Math.min(Math.max(number, min), max);
+};
+
+const toSlug = (text) =>
+  text
+    .trim()
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+const toTitleCase = (text) =>
+  text
+    .toLocaleLowerCase("vi-VN")
+    .replace(/(^|[\s([{/"'-])([^\s([{/"'-])/gu, (match, prefix, letter) => {
+      return prefix + letter.toLocaleUpperCase("vi-VN");
+    });
+
+const getYouTubeId = (url) => {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtu.be")) return parsed.pathname.slice(1);
+    if (parsed.searchParams.get("v")) return parsed.searchParams.get("v");
+    const embedMatch = parsed.pathname.match(/\/embed\/([^/?]+)/);
+    if (embedMatch) return embedMatch[1];
+    const shortsMatch = parsed.pathname.match(/\/shorts\/([^/?]+)/);
+    if (shortsMatch) return shortsMatch[1];
+  } catch (error) {
+    return "";
+  }
+  return "";
+};
+
+const detectVideoType = (url, selectedType) => {
+  if (selectedType !== "auto") return selectedType;
+  if (getYouTubeId(url)) return "youtube";
+  if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return "file";
+  return "iframe";
+};
+
+const initTabs = () => {
+  $$(".tab-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      $$(".tab-button").forEach((item) => item.classList.remove("active"));
+      $$(".tab-panel").forEach((panel) => panel.classList.remove("active"));
+      button.classList.add("active");
+      $(`#${button.dataset.tab}`).classList.add("active");
+    });
+  });
+};
+
+const initTextTools = () => {
+  $("[data-clear='text-input']").addEventListener("click", () => {
+    $("#text-input").value = "";
+    $("#text-output").value = "";
+  });
+
+  $$("[data-text-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = $("#text-input").value;
+      const action = button.dataset.textAction;
+      const output = $("#text-output");
+
+      if (action === "slug") output.value = toSlug(input);
+      if (action === "uppercase") output.value = input.toLocaleUpperCase("vi-VN");
+      if (action === "titlecase") output.value = toTitleCase(input);
+    });
+  });
+};
+
+const generateOrderedList = () => {
+  const start = clampNumber($("#ol-start").value, 1, 999999, 1);
+  const itemCount = clampNumber($("#ol-items").value, 1, 50, 3);
+  const lines = $("#ol-content").value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const items = Array.from({ length: Math.max(lines.length, itemCount) }, (_, index) => {
+    const content = escapeHtml(lines[index] || `Mục ${index + 1}`);
+    return `  <li>${content}</li>`;
+  });
+
+  $("#ol-output").value = `<ol start="${start}">\n${items.join("\n")}\n</ol>`;
+};
+
+const generateLink = () => {
+  const text = escapeHtml($("#link-text").value.trim() || "Xem thêm");
+  const url = escapeHtml($("#link-url").value.trim() || "#");
+  const color = $("#link-color").value;
+  const background = $("#link-bg").value;
+  const padding = escapeHtml($("#link-padding").value.trim() || "10px 16px");
+  const isNofollow = $("#link-nofollow").checked;
+  const isNewTab = $("#link-newtab").checked;
+  const relValues = [];
+
+  if (isNofollow) relValues.push("nofollow");
+  if (isNewTab) relValues.push("noopener", "noreferrer");
+
+  const rel = relValues.length ? ` rel="${relValues.join(" ")}"` : "";
+  const target = isNewTab ? ' target="_blank"' : "";
+  const style = [
+    "display: inline-block",
+    `color: ${color}`,
+    `background-color: ${background}`,
+    `padding: ${padding}`,
+    "border-radius: 6px",
+    "text-decoration: none",
+    "font-weight: 700"
+  ].join("; ");
+
+  const code = `<a href="${url}" style="${style};"${target}${rel}>${text}</a>`;
+  $("#link-output").value = code;
+  $("#link-preview").innerHTML = code;
+};
+
+const generateVideo = () => {
+  const url = $("#video-url").value.trim() || "https://www.youtube.com/embed/VIDEO_ID";
+  const selectedType = $("#video-type").value;
+  const videoType = detectVideoType(url, selectedType);
+  const ratio = $("#video-ratio").value;
+  const radius = clampNumber($("#video-radius").value, 0, 48, 12);
+  const shadow = $("#video-shadow").checked ? "box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);" : "";
+  const lazy = $("#video-lazy").checked ? ' loading="lazy"' : "";
+  const safeUrl = escapeHtml(url);
+  const wrapperStyle = `position: relative; width: 100%; aspect-ratio: ${ratio}; overflow: hidden; border-radius: ${radius}px; ${shadow}`;
+  const mediaStyle = "width: 100%; height: 100%; border: 0; display: block;";
+  let mediaCode = "";
+
+  if (videoType === "file") {
+    const controls = $("#video-controls").checked ? " controls" : "";
+    mediaCode = `<video src="${safeUrl}" style="${mediaStyle}"${controls}></video>`;
+  } else {
+    const youtubeId = videoType === "youtube" ? getYouTubeId(url) : "";
+    const src = youtubeId ? `https://www.youtube.com/embed/${escapeHtml(youtubeId)}` : safeUrl;
+    mediaCode = `<iframe src="${src}" title="Video" style="${mediaStyle}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen${lazy}></iframe>`;
+  }
+
+  $("#video-output").value = `<div style="${wrapperStyle.trim()}">\n  ${mediaCode}\n</div>`;
+};
+
+const generateTable = () => {
+  const rows = clampNumber($("#table-rows").value, 1, 50, 3);
+  const cols = clampNumber($("#table-cols").value, 1, 12, 3);
+  const hasHeader = $("#table-header").value === "yes";
+  const headStyle = "border: 1px solid #d8e0e7; padding: 10px; text-align: left; background-color: #eef6f4;";
+  const cellStyle = "border: 1px solid #d8e0e7; padding: 10px; text-align: left;";
+  const headerCells = Array.from({ length: cols }, (_, index) => `      <th style="${headStyle}">Cột ${index + 1}</th>`).join("\n");
+  const bodyRows = Array.from({ length: rows }, (_, rowIndex) => {
+    const cells = Array.from({ length: cols }, (_, colIndex) => `      <td style="${cellStyle}">Nội dung ${rowIndex + 1}.${colIndex + 1}</td>`).join("\n");
+    return `    <tr>\n${cells}\n    </tr>`;
+  }).join("\n");
+  const tableHead = hasHeader ? `\n  <thead>\n    <tr>\n${headerCells}\n    </tr>\n  </thead>` : "";
+
+  $("#table-output").value = `<div style="width: 100%; overflow-x: auto;">\n<table style="width: 100%; border-collapse: collapse; table-layout: auto;">${tableHead}\n  <tbody>\n${bodyRows}\n  </tbody>\n</table>\n</div>`;
+};
+
+const initCopyButtons = () => {
+  $$("[data-copy]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const target = $(`#${button.dataset.copy}`);
+      if (!target.value.trim()) {
+        showToast("Chưa có nội dung để copy");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(target.value);
+        showToast("Đã copy");
+      } catch (error) {
+        target.select();
+        document.execCommand("copy");
+        showToast("Đã copy");
+      }
+    });
+  });
+};
+
+const initGenerators = () => {
+  $("#generate-ol").addEventListener("click", generateOrderedList);
+  $("#generate-link").addEventListener("click", generateLink);
+  $("#generate-video").addEventListener("click", generateVideo);
+  $("#generate-table").addEventListener("click", generateTable);
+
+  generateOrderedList();
+  generateLink();
+  generateVideo();
+  generateTable();
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  initTabs();
+  initTextTools();
+  initCopyButtons();
+  initGenerators();
+});

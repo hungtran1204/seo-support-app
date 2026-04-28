@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEO Creative Support</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Content SEO Creative & Technical</p>
+      <h1>SEO Creative Support</h1>
+    </div>
+    <span class="status-pill">HTML • CSS • JS</span>
+  </header>
+
+  <main class="app-shell">
+    <nav class="tool-tabs" aria-label="Nhóm công cụ">
+      <button class="tab-button active" type="button" data-tab="text-tools">Văn bản</button>
+      <button class="tab-button" type="button" data-tab="code-tools">Code</button>
+    </nav>
+
+    <section class="tab-panel active" id="text-tools">
+      <article class="tool-card">
+        <div class="tool-head">
+          <div>
+            <h2>Xử lý văn bản</h2>
+            <p>Slug, chữ hoa và chữ cái đầu.</p>
+          </div>
+          <button class="ghost-button" type="button" data-clear="text-input">Xóa</button>
+        </div>
+
+        <label class="field">
+          <span>Nội dung</span>
+          <textarea id="text-input" rows="7" placeholder="Đây là ví dụ"></textarea>
+        </label>
+
+        <div class="action-grid">
+          <button type="button" class="primary-button" data-text-action="slug">Tạo Slug</button>
+          <button type="button" class="primary-button" data-text-action="uppercase">CHỮ HOA</button>
+          <button type="button" class="primary-button" data-text-action="titlecase">Chữ Cái Đầu</button>
+        </div>
+
+        <label class="field result-field">
+          <span>Kết quả</span>
+          <textarea id="text-output" rows="5" readonly></textarea>
+        </label>
+
+        <button class="copy-button" type="button" data-copy="text-output">Copy kết quả</button>
+      </article>
+    </section>
+
+    <section class="tab-panel" id="code-tools">
+      <div class="tool-grid">
+        <article class="tool-card">
+          <div class="tool-head">
+            <div>
+              <h2>Numbering OL</h2>
+              <p>Tạo danh sách bắt đầu từ số tùy chọn.</p>
+            </div>
+          </div>
+
+          <div class="inline-fields">
+            <label class="field">
+              <span>Bắt đầu từ</span>
+              <input id="ol-start" type="number" min="1" value="1">
+            </label>
+            <label class="field">
+              <span>Số dòng</span>
+              <input id="ol-items" type="number" min="1" max="50" value="3">
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Nội dung từng dòng</span>
+            <textarea id="ol-content" rows="5" placeholder="Ý đầu tiên&#10;Ý thứ hai&#10;Ý thứ ba"></textarea>
+          </label>
+
+          <button class="primary-button" type="button" id="generate-ol">Tạo code OL</button>
+          <textarea class="code-output" id="ol-output" rows="7" readonly></textarea>
+          <button class="copy-button" type="button" data-copy="ol-output">Copy code</button>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-head">
+            <div>
+              <h2>Anchor Link</h2>
+              <p>Chèn link có màu, padding và do/nofollow.</p>
+            </div>
+          </div>
+
+          <label class="field">
+            <span>Anchor text</span>
+            <input id="link-text" type="text" placeholder="Xem thêm">
+          </label>
+          <label class="field">
+            <span>URL</span>
+            <input id="link-url" type="url" placeholder="https://example.com">
+          </label>
+
+          <div class="inline-fields">
+            <label class="field">
+              <span>Màu chữ</span>
+              <input id="link-color" type="color" value="#ffffff">
+            </label>
+            <label class="field">
+              <span>Màu nền</span>
+              <input id="link-bg" type="color" value="#0f766e">
+            </label>
+            <label class="field">
+              <span>Padding</span>
+              <input id="link-padding" type="text" value="10px 16px">
+            </label>
+          </div>
+
+          <div class="check-row">
+            <label><input id="link-nofollow" type="checkbox"> nofollow</label>
+            <label><input id="link-newtab" type="checkbox" checked> mở tab mới</label>
+          </div>
+
+          <button class="primary-button" type="button" id="generate-link">Tạo code link</button>
+          <div class="preview-box" id="link-preview"></div>
+          <textarea class="code-output" id="link-output" rows="6" readonly></textarea>
+          <button class="copy-button" type="button" data-copy="link-output">Copy code</button>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-head">
+            <div>
+              <h2>Video Embed</h2>
+              <p>Tạo code video responsive với style tùy chỉnh.</p>
+            </div>
+          </div>
+
+          <label class="field">
+            <span>Video URL</span>
+            <input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=...">
+          </label>
+
+          <div class="inline-fields">
+            <label class="field">
+              <span>Kiểu video</span>
+              <select id="video-type">
+                <option value="auto">Tự nhận diện</option>
+                <option value="youtube">YouTube</option>
+                <option value="iframe">Iframe URL</option>
+                <option value="file">MP4/WebM</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Tỉ lệ</span>
+              <select id="video-ratio">
+                <option value="16 / 9">16:9</option>
+                <option value="4 / 3">4:3</option>
+                <option value="1 / 1">1:1</option>
+                <option value="9 / 16">9:16</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Bo góc</span>
+              <input id="video-radius" type="number" min="0" max="48" value="12">
+            </label>
+          </div>
+
+          <div class="check-row">
+            <label><input id="video-shadow" type="checkbox" checked> đổ bóng</label>
+            <label><input id="video-controls" type="checkbox" checked> controls</label>
+            <label><input id="video-lazy" type="checkbox" checked> lazy load</label>
+          </div>
+
+          <button class="primary-button" type="button" id="generate-video">Tạo code video</button>
+          <textarea class="code-output" id="video-output" rows="9" readonly></textarea>
+          <button class="copy-button" type="button" data-copy="video-output">Copy code</button>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-head">
+            <div>
+              <h2>Bảng Responsive</h2>
+              <p>Tạo bảng không tràn màn hình, width 100%.</p>
+            </div>
+          </div>
+
+          <div class="inline-fields">
+            <label class="field">
+              <span>Số hàng</span>
+              <input id="table-rows" type="number" min="1" max="50" value="3">
+            </label>
+            <label class="field">
+              <span>Số cột</span>
+              <input id="table-cols" type="number" min="1" max="12" value="3">
+            </label>
+            <label class="field">
+              <span>Header</span>
+              <select id="table-header">
+                <option value="yes">Có</option>
+                <option value="no">Không</option>
+              </select>
+            </label>
+          </div>
+
+          <button class="primary-button" type="button" id="generate-table">Tạo code bảng</button>
+          <textarea class="code-output" id="table-output" rows="12" readonly></textarea>
+          <button class="copy-button" type="button" data-copy="table-output">Copy code</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
