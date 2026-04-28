@@ -22,38 +22,102 @@
     </nav>
 
     <section class="tab-panel active" id="text-tools">
-      <article class="tool-card">
-        <div class="tool-head">
-          <div>
-            <h2>Xử lý văn bản</h2>
-            <p>Slug, chữ hoa và chữ cái đầu.</p>
-          </div>
-          <button class="ghost-button" type="button" data-clear="text-input">Xóa</button>
+      <div class="panel-layout">
+        <aside class="tool-menu" aria-label="Mục lục công cụ văn bản">
+          <h2>Mục lục Văn bản</h2>
+          <button class="menu-item active" type="button" data-jump="text-transform">Xử lý văn bản</button>
+          <button class="menu-item" type="button" data-jump="text-counter">Đếm ký tự & từ</button>
+          <button class="menu-item" type="button" data-jump="text-clean">Làm sạch nội dung</button>
+        </aside>
+
+        <div class="tool-stack">
+          <article class="tool-card" id="text-transform">
+            <div class="tool-head">
+              <div>
+                <h2>Xử lý văn bản</h2>
+                <p>Slug, chữ hoa, chữ thường và chữ cái đầu.</p>
+              </div>
+              <button class="ghost-button" type="button" data-clear="text-input">Xóa</button>
+            </div>
+
+            <label class="field">
+              <span>Nội dung</span>
+              <textarea id="text-input" rows="7" placeholder="Đây là ví dụ"></textarea>
+            </label>
+
+            <div class="action-grid">
+              <button type="button" class="primary-button" data-text-action="slug">Tạo Slug</button>
+              <button type="button" class="primary-button" data-text-action="uppercase">CHỮ HOA</button>
+              <button type="button" class="primary-button" data-text-action="lowercase">chữ thường</button>
+              <button type="button" class="primary-button" data-text-action="titlecase">Chữ Cái Đầu</button>
+              <button type="button" class="primary-button" data-text-action="sentencecase">Viết hoa câu</button>
+              <button type="button" class="primary-button" data-text-action="clean">Gọn khoảng trắng</button>
+            </div>
+
+            <label class="field result-field">
+              <span>Kết quả</span>
+              <textarea id="text-output" rows="5" readonly></textarea>
+            </label>
+
+            <button class="copy-button" type="button" data-copy="text-output">Copy kết quả</button>
+          </article>
+
+          <article class="tool-card" id="text-counter">
+            <div class="tool-head">
+              <div>
+                <h2>Đếm ký tự & từ</h2>
+                <p>Theo dõi nhanh độ dài title, đoạn mô tả hoặc nội dung ngắn.</p>
+              </div>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat-box">
+                <span>Ký tự</span>
+                <strong id="char-count">0</strong>
+              </div>
+              <div class="stat-box">
+                <span>Ký tự không khoảng trắng</span>
+                <strong id="char-no-space-count">0</strong>
+              </div>
+              <div class="stat-box">
+                <span>Từ</span>
+                <strong id="word-count">0</strong>
+              </div>
+              <div class="stat-box">
+                <span>Dòng</span>
+                <strong id="line-count">0</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="tool-card" id="text-clean">
+            <div class="tool-head">
+              <div>
+                <h2>Làm sạch nội dung</h2>
+                <p>Xóa khoảng trắng thừa, dòng trống thừa và chuẩn hóa nội dung copy từ nhiều nguồn.</p>
+              </div>
+            </div>
+
+            <button class="primary-button" type="button" id="clean-to-output">Làm sạch và đưa vào kết quả</button>
+            <p class="small-note">Công cụ này dùng nội dung đang nhập ở ô Xử lý văn bản phía trên.</p>
+          </article>
         </div>
-
-        <label class="field">
-          <span>Nội dung</span>
-          <textarea id="text-input" rows="7" placeholder="Đây là ví dụ"></textarea>
-        </label>
-
-        <div class="action-grid">
-          <button type="button" class="primary-button" data-text-action="slug">Tạo Slug</button>
-          <button type="button" class="primary-button" data-text-action="uppercase">CHỮ HOA</button>
-          <button type="button" class="primary-button" data-text-action="titlecase">Chữ Cái Đầu</button>
-        </div>
-
-        <label class="field result-field">
-          <span>Kết quả</span>
-          <textarea id="text-output" rows="5" readonly></textarea>
-        </label>
-
-        <button class="copy-button" type="button" data-copy="text-output">Copy kết quả</button>
-      </article>
+      </div>
     </section>
 
     <section class="tab-panel" id="code-tools">
-      <div class="tool-grid">
-        <article class="tool-card">
+      <div class="panel-layout">
+        <aside class="tool-menu" aria-label="Mục lục công cụ code">
+          <h2>Mục lục Code</h2>
+          <button class="menu-item active" type="button" data-jump="code-ol">Numbering OL</button>
+          <button class="menu-item" type="button" data-jump="code-link">Anchor Link</button>
+          <button class="menu-item" type="button" data-jump="code-video">Video Embed</button>
+          <button class="menu-item" type="button" data-jump="code-table">Bảng Responsive</button>
+          <button class="menu-item" type="button" data-jump="code-meta">Meta SEO</button>
+        </aside>
+
+        <div class="tool-stack">
+        <article class="tool-card" id="code-ol">
           <div class="tool-head">
             <div>
               <h2>Numbering OL</h2>
@@ -82,7 +146,7 @@
           <button class="copy-button" type="button" data-copy="ol-output">Copy code</button>
         </article>
 
-        <article class="tool-card">
+        <article class="tool-card" id="code-link">
           <div class="tool-head">
             <div>
               <h2>Anchor Link</h2>
@@ -125,7 +189,7 @@
           <button class="copy-button" type="button" data-copy="link-output">Copy code</button>
         </article>
 
-        <article class="tool-card">
+        <article class="tool-card" id="code-video">
           <div class="tool-head">
             <div>
               <h2>Video Embed</h2>
@@ -174,7 +238,7 @@
           <button class="copy-button" type="button" data-copy="video-output">Copy code</button>
         </article>
 
-        <article class="tool-card">
+        <article class="tool-card" id="code-table">
           <div class="tool-head">
             <div>
               <h2>Bảng Responsive</h2>
@@ -204,6 +268,43 @@
           <textarea class="code-output" id="table-output" rows="12" readonly></textarea>
           <button class="copy-button" type="button" data-copy="table-output">Copy code</button>
         </article>
+
+        <article class="tool-card" id="code-meta">
+          <div class="tool-head">
+            <div>
+              <h2>Meta SEO</h2>
+              <p>Tạo title, description, canonical và Open Graph cơ bản.</p>
+            </div>
+          </div>
+
+          <label class="field">
+            <span>Meta title</span>
+            <input id="meta-title" type="text" placeholder="Tiêu đề SEO của bài viết">
+          </label>
+          <div class="meter-row">
+            <span id="meta-title-count">0 ký tự</span>
+            <span id="meta-title-hint">Nên khoảng 50-60 ký tự</span>
+          </div>
+
+          <label class="field">
+            <span>Meta description</span>
+            <textarea id="meta-description" rows="4" placeholder="Mô tả ngắn gọn, rõ lợi ích và có từ khóa chính."></textarea>
+          </label>
+          <div class="meter-row">
+            <span id="meta-description-count">0 ký tự</span>
+            <span id="meta-description-hint">Nên khoảng 140-160 ký tự</span>
+          </div>
+
+          <label class="field">
+            <span>Canonical URL</span>
+            <input id="meta-url" type="url" placeholder="https://example.com/bai-viet">
+          </label>
+
+          <button class="primary-button" type="button" id="generate-meta">Tạo meta SEO</button>
+          <textarea class="code-output" id="meta-output" rows="10" readonly></textarea>
+          <button class="copy-button" type="button" data-copy="meta-output">Copy code</button>
+        </article>
+      </div>
       </div>
     </section>
   </main>
