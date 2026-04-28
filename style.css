@@ -130,22 +130,62 @@ h2 {
   display: block;
 }
 
-.tool-grid {
+.panel-layout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 260px minmax(0, 1fr);
   gap: 18px;
+  align-items: start;
 }
 
-.tool-card {
-  padding: 22px;
+.tool-menu {
+  position: sticky;
+  top: 16px;
+  display: grid;
+  gap: 8px;
+  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
-#text-tools .tool-card {
-  max-width: 880px;
+.tool-menu h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.menu-item {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: left;
+}
+
+.menu-item:hover,
+.menu-item.active {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  background: var(--surface-soft);
+}
+
+.tool-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.tool-card {
+  scroll-margin-top: 18px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .tool-head {
@@ -294,6 +334,64 @@ textarea:focus {
   overflow: auto;
 }
 
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat-box {
+  min-height: 96px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.stat-box span {
+  display: block;
+  min-height: 38px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stat-box strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--primary-dark);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.meter-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -6px 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.meter-row.good {
+  color: var(--primary-dark);
+}
+
+.meter-row.warn {
+  color: #b45309;
+}
+
+.meter-row.danger {
+  color: #b91c1c;
+}
+
+.small-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .toast {
   position: fixed;
   right: 18px;
@@ -320,10 +418,15 @@ textarea:focus {
     flex-direction: column;
   }
 
-  .tool-grid,
+  .panel-layout,
   .action-grid,
-  .inline-fields {
+  .inline-fields,
+  .stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .tool-menu {
+    position: static;
   }
 
   h1 {
